@@ -27,10 +27,12 @@ class AssetManager:
 
             self.pokemon_data = response.json()
             pic_url = self.pokemon_data["sprites"]["other"]["official-artwork"]["front_default"]
-            return self.get_image(pic_url, f"{pokemon}.png")
+            pokemon = self.pokemon_data["forms"][0]["name"].capitalize()
+            print(pokemon.capitalize())
+            return self.get_image(pic_url, f"{pokemon}.png"), pokemon
         except requests.RequestException as e:
             print(f"Network error: {e}")
-            return None
+            return None, None
 
     def get_image(self, url, filename):
         target_path = self.cache_dir / filename
@@ -128,7 +130,7 @@ class PokemonFinder(QWidget):
 
     def update_pokemon(self):
         pokemon = self.pokemon_input.text()
-        self.current_img_path = self.asset_manager.get_pokemon(pokemon)
+        self.current_img_path, pokemon = self.asset_manager.get_pokemon(pokemon)
         pixmap = QPixmap(self.current_img_path)
         self.pokemon_pic.setPixmap(pixmap)
         if self.current_img_path is None:
